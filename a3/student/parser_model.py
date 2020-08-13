@@ -106,18 +106,16 @@ class ParserModel(nn.Module):
         ###     Index select: https://pytorch.org/docs/stable/torch.html#torch.index_select
         ###     Gather: https://pytorch.org/docs/stable/torch.html#torch.gather
         ###     View: https://pytorch.org/docs/stable/tensors.html#torch.Tensor.view
-        tmp_features = self.pretrained_embeddings(w)
-        shape = tmp_features.size()
-        x = tmp_features.view(shape[0], shape[1]*shape[2])
-        # a,b = np.shape(w)
-        # x = np.zeros((a, b*self.embed_size))
-        # for i in range(a):
-        #     feature = torch.index_select(self.embeddings,0,w[i])
-        #     print('feature size:',np.shape(feature))
-        #     feature.reshape(1,-1)
-        #     x[i] = feature
-        
-
+        # tmp_features = self.pretrained_embeddings(w)
+        # shape = tmp_features.size()
+        # x = tmp_features.view(shape[0], shape[1]*shape[2])
+        a,b = np.shape(w)
+        x = np.zeros((a, b*self.embed_size))
+        for i in range(a):
+            feature = torch.index_select(self.embeddings,0,w[i])
+            feature = torch.reshape(feature,(-1,))
+            x[i:,] = feature.detach().numpy()
+        x = torch.from_numpy(x).float()
         ### END YOUR CODE
         return x
 
